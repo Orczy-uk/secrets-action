@@ -4,17 +4,28 @@ on:
   pull_request:
     paths-ignore:
       - 'docs/**'
+      - '*.md'
+      - 'LICENSE'
   push:
     branches: [main]
     paths-ignore:
       - 'docs/**'
+      - '*.md'
+      - 'LICENSE'
   schedule:
     - cron: '0 3 * * 1'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name != 'schedule' && github.ref != 'refs/heads/main' }}
 
 jobs:
   semgrep:
     name: Semgrep Scan
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     container:
       image: semgrep/semgrep:1.159.0
     steps:
