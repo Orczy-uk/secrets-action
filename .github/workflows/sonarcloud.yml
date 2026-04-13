@@ -1,0 +1,22 @@
+name: SonarCloud
+
+on:
+  pull_request:
+    paths-ignore:
+      - 'docs/**'
+  push:
+    branches: [main]
+    paths-ignore:
+      - 'docs/**'
+
+jobs:
+  sonarcloud:
+    name: SonarCloud Analysis
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - uses: SonarSource/sonarqube-scan-action@v5
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
